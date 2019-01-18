@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Gesture Demo</title>
+
+    <meta charset='utf-8'>
+    <script src='./html5slides/slides.js'></script>
+
+    <!-- Hand demo -->
+    <script type="text/javascript" src="../jshg/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../jshg/compatibility.js"></script>
+    <script type="text/javascript" src="../jshg/jshg.js"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../css/pure-min.css">
+    <link rel="stylesheet" href="./index.css">
+  </head>
+  
+  <body style="display:none">
+    <div class='gesture-div'>
+      <div id="gestureShownHere"></div>
+      <p align="center" style="margin-top:0px;">
+        <a class="button-jshg button-start pure-button" onClick="JSHGToggle($(this))" target="new">START</a>
+      </p>
+    </div>
+    <section class='slides layout-regular template-default'>
+      <!-- Your slides (<article>s) go here. Delete or comment out the
+           slides below. -->
+      <article>
+        <center>
+          <img src="hand.jpg"/><br/><br/>
+          <h3 align="center">HAND GESTURE DEMO</h3>
+          <p>JAN 2019</p>
+        </center>
+      </article>      
+      <article class='smaller'>
+        <h3>
+          CLICK "START" BUTTON TO CONTROL SLIDES WITH YOUR HAND!
+        </h3>
+        <div id="learningShownHere" class="learning-div"></div>
+        <div id="startInstruction">
+          <ul>
+            <li>Learning your skin color for the first time.</li>
+            <li>After learning, the hand gesture images are shown on the left corner.<br><br>
+              <center><img src="handgestureimage.jpg" width="200px"/><br>
+                <i>the red dot is the position of hand, yellow dots are fingers.</i>
+              </center>
+            </li>
+            <li>Move hand (the red dot) to the left to move the slide backward.</li>
+            <li>Move hand (the red dot) to the righ to move the slide forward.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article>
+        <h3>
+          IS IT COOL?
+        </h3>
+        <p align="center">
+          <img src='handcolor.jpg'><br>
+          How can we do that?
+        </p>
+      </article> 
+     <article>
+        <h3>
+          Thank You !
+        </h3>
+        <p>Hope you enjoy it and predict your own future.</p>
+      </article>
+      <audio id="prev">        
+        <source src="Prev.mp3" type="audio/mpeg">        
+      </audio>
+      <audio id="next">        
+        <source src="Next.mp3" type="audio/mpeg">        
+      </audio>
+    </section>
+     <script type="text/javascript">
+        var currentGesture = null;
+        var firstTime = true;
+        function JSHGToggle(toggleBut) {
+            toggleBut.removeClass("button-stop");
+            toggleBut.removeClass("button-start");
+            if (JSHG.isRunning()) {
+              JSHG.stop();
+              toggleBut.addClass("button-start");
+              toggleBut.html("START JSHG");
+            } else {
+              if (firstTime) {
+                curSlide = 1;
+                updateSlides();
+                JSHG.learnSkinColor();
+                $("#startInstruction").hide();
+              } else {
+                JSHG.run();
+              }
+              toggleBut.addClass("button-stop");
+              toggleBut.html("STOP");
+            }
+            firstTime = false;
+        }
+
+        var finishLearning = function() {
+          $("#startInstruction").show();
+        }
+
+        var actionMapper = function(gesture) {
+            if (currentGesture != null && currentGesture.isSameRelativePos(gesture)) return;
+            if (gesture.isLeft) {
+                nextSlide();
+              $("#next").play();
+            } else if (gesture.isRight) {
+                prevSlide();
+              $("#prev").play();
+            };
+            currentGesture = gesture;
+        }
+        JSHG.init({
+            "actionCallback": actionMapper, 
+            "learnCallback": finishLearning,
+            "learnDivId": "learningShownHere",
+            "gestureDivId": "gestureShownHere",
+            "settings": {
+              "learningCountDown_": 10, 
+              "cameraWidth": 500, 
+              "cameraHeight": 400, 
+              "gestureDisplayWidth": 400, 
+              "gestureDisplayHeight": 300
+            },
+        });
+    </script> 
+  </body>
+</html>
